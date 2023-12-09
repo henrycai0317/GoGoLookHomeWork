@@ -10,18 +10,20 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import com.example.gogolookhomework.R
 import com.example.gogolookhomework.databinding.FragmentPhotoSearchHomeBinding
+import com.example.gogolookhomework.model.SearchViewModel
 
 class PhotoSearchHomeFragment : Fragment() {
 
     private var mViewBinding: FragmentPhotoSearchHomeBinding? = null
+    private val mViewModel by activityViewModels<SearchViewModel>()
     private  val TAG = "PhotoSearchHomeFragment"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         @Suppress("DEPRECATION")
         setHasOptionsMenu(true)
-
     }
 
     @Suppress("OVERRIDE_DEPRECATION")
@@ -38,6 +40,7 @@ class PhotoSearchHomeFragment : Fragment() {
             setOnQueryTextListener(object : SearchView.OnQueryTextListener{
                 override fun onQueryTextSubmit(query: String?): Boolean {
                     Log.d(TAG, "onQueryTextSubmit: $query")
+                    mViewModel.callSearchApi(query ?: "")
                     return true
                 }
 
@@ -60,5 +63,16 @@ class PhotoSearchHomeFragment : Fragment() {
         return mViewBinding?.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initObserver()
+    }
 
+    private fun initObserver() {
+        mViewModel.getSearchRes().observe(viewLifecycleOwner){
+            it.let {
+
+            }
+        }
+    }
 }
