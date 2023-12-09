@@ -12,9 +12,11 @@ import retrofit2.Response
 
 
 private const val TAG = "SearchViewModel"
-class SearchViewModel :ViewModel(){
+
+class SearchViewModel : ViewModel() {
     private val mResponseLiveData: MutableLiveData<Response<PixabayResponse>> = MutableLiveData()
 
+    private var mHasInitHomeFragment = false
 
     fun callSearchApi(pString: String) {
         val apiKey = "41142826-c0ca063b999757c5a8f6f5c3a"
@@ -42,8 +44,14 @@ class SearchViewModel :ViewModel(){
 
     }
 
-    fun getSearchRes() : LiveData<Response<PixabayResponse>> {
-        return  mResponseLiveData
+    fun getSearchRes(): LiveData<Response<PixabayResponse>> {
+        return mResponseLiveData
     }
+
+    fun setHadInitHomeFragment(pIsInit:Boolean) {
+        mHasInitHomeFragment = pIsInit
+    }
+
+    fun getHadInitHomeFragment() = mHasInitHomeFragment
 
 }

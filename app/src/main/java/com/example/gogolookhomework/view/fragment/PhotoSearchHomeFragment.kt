@@ -11,19 +11,26 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.recyclerview.widget.GridLayoutManager
 import com.example.gogolookhomework.R
 import com.example.gogolookhomework.databinding.FragmentPhotoSearchHomeBinding
 import com.example.gogolookhomework.model.SearchViewModel
+import com.example.gogolookhomework.view.fragment.adapter.PhotoAdapter
 
 class PhotoSearchHomeFragment : Fragment() {
 
     private var mViewBinding: FragmentPhotoSearchHomeBinding? = null
     private val mViewModel by activityViewModels<SearchViewModel>()
-    private  val TAG = "PhotoSearchHomeFragment"
+    private val TAG = "PhotoSearchHomeFragment"
+    private var mHasInit = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         @Suppress("DEPRECATION")
         setHasOptionsMenu(true)
+        if (!mViewModel.getHadInitHomeFragment()) {
+            mViewModel.callSearchApi("default")
+            mViewModel.setHadInitHomeFragment(true)
+        }
     }
 
     @Suppress("OVERRIDE_DEPRECATION")
@@ -37,7 +44,7 @@ class PhotoSearchHomeFragment : Fragment() {
 
         searchView.apply {
 
-            setOnQueryTextListener(object : SearchView.OnQueryTextListener{
+            setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {
                     Log.d(TAG, "onQueryTextSubmit: $query")
                     mViewModel.callSearchApi(query ?: "")
@@ -66,12 +73,31 @@ class PhotoSearchHomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initObserver()
+        initRecyclerView()
+    }
+
+    private fun initRecyclerView() {
+        mViewBinding?.apply {
+            context?.let { iContext ->
+                recyclerView.layoutManager = GridLayoutManager(iContext, 3)
+            }
+        }
     }
 
     private fun initObserver() {
-        mViewModel.getSearchRes().observe(viewLifecycleOwner){
-            it.let {
-
+        mViewModel.getSearchRes().observe(viewLifecycleOwner) {
+            it.let { iRes ->
+                if (iRes.isSuccessful) {
+                    iRes.body()?.hits?.let { iData ->
+                        if (iData.isNotEmpty()) {
+                            mViewBinding?.recyclerView?.adapter = PhotoAdapter(iData)
+                        } else {
+                            //Error service dialog
+                        }
+                    }
+                } else {
+                    //Error service dialog
+                }
             }
         }
     }
