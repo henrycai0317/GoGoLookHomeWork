@@ -34,7 +34,7 @@ class PhotoAdapter(private var mItemList: List<Hit>) : RecyclerView.Adapter<Recy
 
   inner class ImageHolder(val pViewBinding: ItemListPhotoBinding) : RecyclerView.ViewHolder(pViewBinding.root) {
             fun setData(pHit:Hit) {
-                val imageUrl = pHit.userImageURL
+                val imageUrl = pHit.webformatURL
                 mContext?.let { iContext ->
                     Glide.with(iContext).load(imageUrl)
                         .placeholder(R.drawable.default_image).into(pViewBinding.ivPhoto)
