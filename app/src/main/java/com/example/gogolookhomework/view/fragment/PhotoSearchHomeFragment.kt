@@ -57,12 +57,6 @@ class PhotoSearchHomeFragment : Fragment() {
         mViewBinding?.icShowHistory?.apply {
             context?.let { iContext ->
                 listHistory.layoutManager = LinearLayoutManager(iContext)
-                val mArray = ArrayList<String>().apply {
-                    add("Test1")
-                    add("Test2")
-                    add("Test3")
-                }
-                listHistory.adapter = SearchHistoryAdapter(mArray)
             }
         }
     }
@@ -94,6 +88,7 @@ class PhotoSearchHomeFragment : Fragment() {
                         if (mNowSearchStr.toString() != mTempSearchStr.toString()) {
                             Log.d(TAG, "initListener: star search $mNowSearchStr")
                             mViewModel.callSearchApi(mNowSearchStr.toString())
+                            mViewModel.insertSearchHistory(mNowSearchStr.toString())
                             mTempSearchStr.clear()
                             mTempSearchStr.append(mNowSearchStr.toString())
                         }
@@ -170,6 +165,23 @@ class PhotoSearchHomeFragment : Fragment() {
                 } else {
                     //Error service dialog
                 }
+            }
+        }
+
+        mViewModel.getAllHistoryData().observe(viewLifecycleOwner) { iHistoryList ->
+            mViewBinding?.apply {
+                icShowHistory.listHistory.adapter =
+                    SearchHistoryAdapter(iHistoryList, { iSearchStr ->
+                        if (iSearchStr != mNowSearchStr.toString()) {
+                            icSearchBar.editInput.setText(iSearchStr)
+                            mViewModel.callSearchApi(iSearchStr)
+                        }
+                        icShowHistory.root.visibility = View.GONE
+                        icSearchBar.editInput.clearFocus()
+                        closeKeyboard()
+                    }, { iClearPosition ->
+                        mViewModel.deleteSearchHistory(iClearPosition)
+                    })
             }
         }
     }

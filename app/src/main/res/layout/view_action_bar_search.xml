@@ -35,7 +35,6 @@
             android:gravity="center_vertical"
             android:hint="@string/search_hint"
             android:imeOptions="actionDone"
-            android:maxLength="15"
             android:maxLines="1"
             android:paddingLeft="8dp"
             android:singleLine="true"

@@ -4,8 +4,13 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.gogolookhomework.connect.PixabayResponse
 import com.example.gogolookhomework.connect.PixabayService
+import com.example.gogolookhomework.model.room.SearchHistory
+import com.example.gogolookhomework.model.room.SearchHistoryRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -18,6 +23,8 @@ class SearchViewModel : ViewModel() {
 
     private var mHasInitHomeFragment = false
     private var mIsGridLayout = true
+
+    private val mSearchHistoryRepository = SearchHistoryRepository.get()
 
     fun callSearchApi(pString: String) {
         val apiKey = "41142826-c0ca063b999757c5a8f6f5c3a"
@@ -49,7 +56,7 @@ class SearchViewModel : ViewModel() {
         return mResponseLiveData
     }
 
-    fun setHadInitHomeFragment(pIsInit:Boolean) {
+    fun setHadInitHomeFragment(pIsInit: Boolean) {
         mHasInitHomeFragment = pIsInit
     }
 
@@ -60,5 +67,27 @@ class SearchViewModel : ViewModel() {
     }
 
     fun getIsGridLayout() = mIsGridLayout
+
+
+    fun insertSearchHistory(query: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            mSearchHistoryRepository.insertSearchHistory(query)
+        }
+    }
+
+    fun deleteSearchHistory(searchHistoryId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            mSearchHistoryRepository.deleteSearchHistory(searchHistoryId)
+        }
+    }
+
+    fun getAllHistoryData(): LiveData<List<SearchHistory>> {
+        return mSearchHistoryRepository.getAllSearchHistory()
+    }
+
+    fun deleteAllSearchHistory(){
+        mSearchHistoryRepository.deleteAllSearchHistory()
+    }
+
 
 }
