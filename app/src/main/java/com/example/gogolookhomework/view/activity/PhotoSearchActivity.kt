@@ -16,8 +16,7 @@ class PhotoSearchActivity : AppCompatActivity() {
         //狀態欄更新
         supportActionBar?.hide()
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-        window.statusBarColor = ContextCompat.getColor(this@PhotoSearchActivity, R.color.cl60C395)
-        WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = true
+        window.statusBarColor = ContextCompat.getColor(this@PhotoSearchActivity, R.color.cl1B2244)
 
         mViewBinding = ActivityPhotoSearchBinding.inflate(layoutInflater)
         setContentView(mViewBinding?.root)
