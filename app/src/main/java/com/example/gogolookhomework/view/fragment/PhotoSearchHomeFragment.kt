@@ -3,12 +3,12 @@ package com.example.gogolookhomework.view.fragment
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -25,7 +25,6 @@ class PhotoSearchHomeFragment : Fragment() {
 
     private var mViewBinding: FragmentPhotoSearchHomeBinding? = null
     private val mViewModel by activityViewModels<SearchViewModel>()
-    private val TAG = "PhotoSearchHomeFragment"
     private val mNowSearchStr = StringBuilder("")
     private val mTempSearchStr = StringBuilder("")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -78,7 +77,6 @@ class PhotoSearchHomeFragment : Fragment() {
                         val iStrInput = pInput.toString()
                         mNowSearchStr.clear()
                         mNowSearchStr.append(iStrInput)
-                        Log.d(TAG, "afterTextChanged: ${pInput.toString()}")
                         icSearchBar.ivClearBack.visibility =
                             if (iStrInput.isNotEmpty()) View.VISIBLE else View.GONE
                     }
@@ -88,7 +86,6 @@ class PhotoSearchHomeFragment : Fragment() {
                 editInput.setOnEditorActionListener { _, keyCode, event ->
                     if (keyCode == EditorInfo.IME_ACTION_DONE || event.keyCode == KeyEvent.KEYCODE_ENTER) {
                         if (mNowSearchStr.toString() != mTempSearchStr.toString()) {
-                            Log.d(TAG, "initListener: star search $mNowSearchStr")
                             activity?.let { iAct ->
                                 mViewModel.callSearchApi(iAct, mNowSearchStr.toString())
                             }
@@ -163,11 +160,13 @@ class PhotoSearchHomeFragment : Fragment() {
                         if (iData.isNotEmpty()) {
                             mViewBinding?.recyclerView?.adapter = PhotoAdapter(iData)
                         } else {
-                            //Error service dialog
+                            //Error service toast
+                            showToast("No results found in the search.")
                         }
                     }
                 } else {
-                    //Error service dialog
+                    //Error service toast
+                    showToast("Pixabay Api Error : ${iRes.code()}")
                 }
             }
         }
@@ -187,7 +186,7 @@ class PhotoSearchHomeFragment : Fragment() {
                         closeKeyboard()
                     }, { iClearPosition ->
                         mViewModel.deleteSearchHistory(iClearPosition)
-                    }){
+                    }) {
                         mViewModel.deleteAllSearchHistory()
                     }
             }
@@ -215,4 +214,14 @@ class PhotoSearchHomeFragment : Fragment() {
             }
         }
     }
+
+    /**
+     * 顯示 Toast
+     */
+    private fun showToast(pContent: String) {
+        activity?.let { iAct ->
+            Toast.makeText(iAct, pContent, Toast.LENGTH_SHORT).show()
+        }
+    }
+
 }
