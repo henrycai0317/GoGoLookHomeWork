@@ -91,7 +91,9 @@ class SearchViewModel : ViewModel() {
     }
 
     fun deleteAllSearchHistory() {
-        mSearchHistoryRepository.deleteAllSearchHistory()
+        viewModelScope.launch(Dispatchers.IO) {
+            mSearchHistoryRepository.deleteAllSearchHistory()
+        }
     }
 
     fun showProgressDialog(pContext: Context?) {

@@ -187,7 +187,9 @@ class PhotoSearchHomeFragment : Fragment() {
                         closeKeyboard()
                     }, { iClearPosition ->
                         mViewModel.deleteSearchHistory(iClearPosition)
-                    })
+                    }){
+                        mViewModel.deleteAllSearchHistory()
+                    }
             }
         }
     }

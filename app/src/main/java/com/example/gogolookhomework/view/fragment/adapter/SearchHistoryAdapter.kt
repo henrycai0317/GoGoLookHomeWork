@@ -2,6 +2,7 @@ package com.example.gogolookhomework.view.fragment.adapter
 
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -12,7 +13,8 @@ import com.example.gogolookhomework.model.room.SearchHistory
 class SearchHistoryAdapter(
     private val mHistoryList: List<SearchHistory>,
     val mItemClickConsumer: (String) -> Unit,
-    val mDeleteClickConsumer: (Int) -> Unit
+    val mDeleteClickConsumer: (Int) -> Unit,
+    val mDeleteAllConsumer: () -> Unit
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -29,18 +31,21 @@ class SearchHistoryAdapter(
     override fun getItemCount() = mHistoryList.size
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val itemData = mHistoryList[position]
-        (holder as HistoryHolder).setData(itemData.query, itemData.id)
+        (holder as HistoryHolder).apply {
+            val itemData = mHistoryList[position]
+            pViewBinding.tvClearAll.visibility = if (position == 0) View.VISIBLE else View.GONE
+            setData(itemData.query, itemData.id)
+        }
     }
 
-    inner class HistoryHolder(private val pViewBinding: ItemListSearchHistoryBinding) :
+    inner class HistoryHolder(val pViewBinding: ItemListSearchHistoryBinding) :
         RecyclerView.ViewHolder(pViewBinding.root) {
 
         fun setData(pHistoryStr: String, position: Int) {
             pViewBinding.tvHistoryTxt.text = pHistoryStr
 
             pViewBinding.apply {
-                root.setOnClickListener {
+                clHistoryItem.setOnClickListener {
                     Log.d("HistoryHolder", "root click")
                     mItemClickConsumer(pHistoryStr)
                 }
@@ -48,6 +53,11 @@ class SearchHistoryAdapter(
                 ivDeleteHistory.setOnClickListener {
                     Log.d("HistoryHolder", "ivDeleteHistory click")
                     mDeleteClickConsumer(position)
+                }
+
+                tvClearAll.setOnClickListener {
+                    Log.d("HistoryHolder", "tvClearAll click")
+                    mDeleteAllConsumer()
                 }
             }
         }
