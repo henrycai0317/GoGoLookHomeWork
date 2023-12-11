@@ -31,7 +31,9 @@ class PhotoSearchHomeFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (!mViewModel.getHadInitHomeFragment()) {
-            mViewModel.callSearchApi("default")
+            activity?.let { iAct ->
+                mViewModel.callSearchApi(iAct, "default")
+            }
             mViewModel.setHadInitHomeFragment(true)
         }
     }
@@ -87,7 +89,9 @@ class PhotoSearchHomeFragment : Fragment() {
                     if (keyCode == EditorInfo.IME_ACTION_DONE || event.keyCode == KeyEvent.KEYCODE_ENTER) {
                         if (mNowSearchStr.toString() != mTempSearchStr.toString()) {
                             Log.d(TAG, "initListener: star search $mNowSearchStr")
-                            mViewModel.callSearchApi(mNowSearchStr.toString())
+                            activity?.let { iAct ->
+                                mViewModel.callSearchApi(iAct, mNowSearchStr.toString())
+                            }
                             mViewModel.insertSearchHistory(mNowSearchStr.toString())
                             mTempSearchStr.clear()
                             mTempSearchStr.append(mNowSearchStr.toString())
@@ -174,7 +178,9 @@ class PhotoSearchHomeFragment : Fragment() {
                     SearchHistoryAdapter(iHistoryList, { iSearchStr ->
                         if (iSearchStr != mNowSearchStr.toString()) {
                             icSearchBar.editInput.setText(iSearchStr)
-                            mViewModel.callSearchApi(iSearchStr)
+                            activity?.let { iAct ->
+                                mViewModel.callSearchApi(iAct, iSearchStr)
+                            }
                         }
                         icShowHistory.root.visibility = View.GONE
                         icSearchBar.editInput.clearFocus()

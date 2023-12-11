@@ -61,6 +61,9 @@ dependencies {
     //Room
     implementation("androidx.room:room-runtime:2.5.0")
     kapt("androidx.room:room-compiler:2.5.0")
+    //lottie 動畫
+    implementation ("com.airbnb.android:lottie:5.2.0")
+
     implementation("androidx.activity:activity-ktx:1.8.1")
     implementation("androidx.fragment:fragment-ktx:1.6.2")
     implementation("androidx.recyclerview:recyclerview:1.3.2")

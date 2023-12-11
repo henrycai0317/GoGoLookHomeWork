@@ -1,5 +1,6 @@
 package com.example.gogolookhomework.model
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -9,6 +10,7 @@ import com.example.gogolookhomework.connect.PixabayResponse
 import com.example.gogolookhomework.connect.PixabayService
 import com.example.gogolookhomework.model.room.SearchHistory
 import com.example.gogolookhomework.model.room.SearchHistoryRepository
+import com.example.gogolookhomework.view.ProcessDialog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.Call
@@ -25,12 +27,13 @@ class SearchViewModel : ViewModel() {
     private var mIsGridLayout = true
 
     private val mSearchHistoryRepository = SearchHistoryRepository.get()
+    private var mProcessDialog: ProcessDialog? = null
 
-    fun callSearchApi(pString: String) {
+    fun callSearchApi(pContext: Context?, pString: String) {
         val apiKey = "41142826-c0ca063b999757c5a8f6f5c3a"
         val iPixabayService = PixabayService()
         val call = iPixabayService.searchImages(apiKey, pString, "photo")
-
+        showProgressDialog(pContext)
         call.enqueue(object : Callback<PixabayResponse> {
             override fun onResponse(
                 call: Call<PixabayResponse>,
@@ -43,10 +46,12 @@ class SearchViewModel : ViewModel() {
                     Log.d(TAG, "onResponse: not success ${response.code()}")
                 }
                 mResponseLiveData.value = response
+                cancelProgressDialog()
             }
 
             override fun onFailure(call: Call<PixabayResponse>, t: Throwable) {
                 Log.d(TAG, "onFailure: $t")
+                cancelProgressDialog()
             }
         })
 
@@ -85,8 +90,22 @@ class SearchViewModel : ViewModel() {
         return mSearchHistoryRepository.getAllSearchHistory()
     }
 
-    fun deleteAllSearchHistory(){
+    fun deleteAllSearchHistory() {
         mSearchHistoryRepository.deleteAllSearchHistory()
+    }
+
+    fun showProgressDialog(pContext: Context?) {
+        val iProcessDialog = mProcessDialog
+        if (iProcessDialog == null && pContext != null) {
+            val iiProcessDialog = ProcessDialog(pContext)
+            iiProcessDialog.show()
+            mProcessDialog = iiProcessDialog
+        }
+    }
+
+    fun cancelProgressDialog() {
+        mProcessDialog?.cancel()
+        mProcessDialog = null
     }
 
 
