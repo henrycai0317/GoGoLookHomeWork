@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gogolookhomework.R
@@ -158,7 +159,12 @@ class PhotoSearchHomeFragment : Fragment() {
                 if (iRes.isSuccessful) {
                     iRes.body()?.hits?.let { iData ->
                         if (iData.isNotEmpty()) {
-                            mViewBinding?.recyclerView?.adapter = PhotoAdapter(iData)
+                            mViewBinding?.recyclerView?.adapter = PhotoAdapter(iData) { iUrl ->
+                                findNavController().navigate(
+                                    R.id.action_photoSearchHomeFragment_to_photoSearchItemFragment,
+                                    PhotoSearchItemFragment.newBundle(iUrl)
+                                )
+                            }
                         } else {
                             //Error service toast
                             showToast("No results found in the search.")

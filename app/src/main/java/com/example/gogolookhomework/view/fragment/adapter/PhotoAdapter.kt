@@ -10,9 +10,10 @@ import com.example.gogolookhomework.R
 import com.example.gogolookhomework.connect.Hit
 import com.example.gogolookhomework.databinding.ItemListPhotoBinding
 
-class PhotoAdapter(private var mItemList: List<Hit>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class PhotoAdapter(private var mItemList: List<Hit>, private val pPhotoClick: (String) -> Unit) :
+    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private var mContext:Context? = null
+    private var mContext: Context? = null
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         mContext = parent.context
         return ImageHolder(
@@ -32,14 +33,19 @@ class PhotoAdapter(private var mItemList: List<Hit>) : RecyclerView.Adapter<Recy
         (holder as ImageHolder).setData(itemData)
     }
 
-  inner class ImageHolder(val pViewBinding: ItemListPhotoBinding) : RecyclerView.ViewHolder(pViewBinding.root) {
-            fun setData(pHit:Hit) {
-                val imageUrl = pHit.webformatURL
-                mContext?.let { iContext ->
-                    Glide.with(iContext).load(imageUrl)
-                        .placeholder(R.drawable.default_image).into(pViewBinding.ivPhoto)
-                }
-
+    inner class ImageHolder(val pViewBinding: ItemListPhotoBinding) :
+        RecyclerView.ViewHolder(pViewBinding.root) {
+        fun setData(pHit: Hit) {
+            val imageUrl = pHit.webformatURL
+            mContext?.let { iContext ->
+                Glide.with(iContext).load(imageUrl)
+                    .placeholder(R.drawable.default_image).into(pViewBinding.ivPhoto)
             }
+
+            pViewBinding.ivPhoto.setOnClickListener {
+                pPhotoClick(pHit.largeImageURL)
+            }
+
         }
+    }
 }
