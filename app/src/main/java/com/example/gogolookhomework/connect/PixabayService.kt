@@ -16,7 +16,12 @@ class PixabayService {
         pixabayApi = retrofit.create(PixabayApi::class.java)
     }
 
-    fun searchImages(apiKey: String, query: String, imageType: String): Call<PixabayResponse> {
-        return pixabayApi.searchPhoto(apiKey, query, imageType)
+    fun searchImages(
+        apiKey: String,
+        query: String,
+        perPage: Int,
+        imageType: String
+    ): Call<PixabayResponse> {
+        return pixabayApi.searchPhoto(apiKey, query, perPage, imageType)
     }
 }

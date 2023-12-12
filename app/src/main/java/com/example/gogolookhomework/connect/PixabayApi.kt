@@ -11,6 +11,7 @@ interface PixabayApi  {
     fun searchPhoto(
         @Query("key") key : String,
         @Query("q") query: String,
+        @Query("per_page") perPage: Int,
         @Query("image_type") imageType: String
     ): Call<PixabayResponse>
 }

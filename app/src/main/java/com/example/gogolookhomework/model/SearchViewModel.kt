@@ -32,7 +32,7 @@ class SearchViewModel : ViewModel() {
     fun callSearchApi(pContext: Context?, pString: String) {
         val apiKey = "41142826-c0ca063b999757c5a8f6f5c3a"
         val iPixabayService = PixabayService()
-        val call = iPixabayService.searchImages(apiKey, pString, "photo")
+        val call = iPixabayService.searchImages(apiKey, pString, 50, "photo")
         showProgressDialog(pContext)
         call.enqueue(object : Callback<PixabayResponse> {
             override fun onResponse(
